@@ -114,8 +114,9 @@ bool HarmonizerjuceAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
   #else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
-    if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
+    //if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
+    // && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
+    if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono())
         return false;
 
     // This checks if the input layout matches the output layout
@@ -131,6 +132,12 @@ bool HarmonizerjuceAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 
 void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
+    // Must initialize pitchDetector here because this is the only place we know
+    // block size and sample rate.
+    // TODO what if block size and sample rate change?
+    if (pitchDetector == nullptr) {
+        pitchDetector = new PitchDetector(getSampleRate());
+    }
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -155,6 +162,8 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
+        pitchDetector->doPitchDetection(channelData, buffer.getNumSamples());
+        currentPitch = pitchDetector->getCurrentPitch();
     }
 }
 

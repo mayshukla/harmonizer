@@ -11,6 +11,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include <string>
+
 //==============================================================================
 HarmonizerjuceAudioProcessorEditor::HarmonizerjuceAudioProcessorEditor (HarmonizerjuceAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
@@ -21,7 +23,7 @@ HarmonizerjuceAudioProcessorEditor::HarmonizerjuceAudioProcessorEditor (Harmoniz
 
     addAndMakeVisible(pitch);
     pitch.setColour(Label::ColourIds::textColourId, Colours::white);
-    pitch.setFont(50.0f);
+    pitch.setFont(32.0f);
     pitch.setJustificationType(Justification::centred);
     pitch.setText("pitch", NotificationType::dontSendNotification);
 }
@@ -38,11 +40,15 @@ void HarmonizerjuceAudioProcessorEditor::paint (Graphics& g)
 
     g.setColour (Colours::white);
     g.setFont (15.0f);
+
+    std::string text = "pitch : ";
+    text += std::to_string(processor.getCurrentPitch());
+    pitch.setText(text, NotificationType::dontSendNotification);
 }
 
 void HarmonizerjuceAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    pitch.setBounds (40, 30, 100, getHeight() - 60);
+    pitch.setBounds (40, 30, 300, getHeight() - 60);
 }

@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 
+#include "PitchDetector.h"
+
 //==============================================================================
 /**
 */
@@ -55,9 +57,12 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    float getCurrentPitch() { return currentPitch; }
+
 private:
-    static constexpr std::size_t fftOrder = 8;
-    //dsp::FFT fft;
+    PitchDetector *pitchDetector = nullptr;
+    float currentPitch;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizerjuceAudioProcessor)
 };
