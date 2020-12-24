@@ -24,6 +24,12 @@ PitchDetector::PitchDetector(int sampleRate)
     aubio_pitch_set_unit(aubioPitch, "Hz");
 }
 
+PitchDetector::~PitchDetector() {
+    del_aubio_pitch(aubioPitch);
+    del_fvec(aubioInputBuffer);
+    del_fvec(aubioOutputBuffer);
+}
+
 void PitchDetector::doPitchDetection(const float *input, int size) {
     // Move over old cached values in aubio input buffer
     // TODO use a circular buffer

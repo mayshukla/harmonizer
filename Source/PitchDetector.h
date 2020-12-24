@@ -16,6 +16,7 @@ class PitchDetector
 {
 public:
     PitchDetector(int sampleRate);
+    ~PitchDetector();
 
     void doPitchDetection(const float *input, int size);
 
