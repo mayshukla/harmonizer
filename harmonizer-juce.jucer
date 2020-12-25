@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="P22w0B" name="harmonizer-juce" projectType="audioplug" jucerVersion="5.4.7"
-              pluginCharacteristicsValue="pluginWantsMidiIn" pluginFormats="buildStandalone,buildVST,buildVST3">
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginFormats="buildStandalone,buildVST,buildVST3">
   <MAINGROUP id="ZkGxks" name="harmonizer-juce">
     <GROUP id="{A9BD30E0-AFE4-11C2-98E5-0F2F07E08E4C}" name="Source">
+      <FILE id="LtVLe0" name="PhaseVocoder.cpp" compile="1" resource="0"
+            file="Source/PhaseVocoder.cpp"/>
+      <FILE id="FpDHQH" name="PhaseVocoder.h" compile="0" resource="0" file="Source/PhaseVocoder.h"/>
       <FILE id="kWknze" name="PitchDetector.cpp" compile="1" resource="0"
             file="Source/PitchDetector.cpp"/>
       <FILE id="cokDiW" name="PitchDetector.h" compile="0" resource="0" file="Source/PitchDetector.h"/>

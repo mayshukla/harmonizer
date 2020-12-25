@@ -138,6 +138,9 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     if (pitchDetector == nullptr) {
         pitchDetector = new PitchDetector(getSampleRate());
     }
+    if (phaseVocoder == nullptr) {
+        phaseVocoder = new PhaseVocoder(getSampleRate(), getBlockSize());
+    }
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();

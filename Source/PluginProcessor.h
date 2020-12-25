@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 
 #include "PitchDetector.h"
+#include "PhaseVocoder.h"
 
 //==============================================================================
 /**
@@ -62,6 +63,8 @@ public:
 private:
     PitchDetector *pitchDetector = nullptr;
     float currentPitch;
+
+    PhaseVocoder *phaseVocoder = nullptr;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizerjuceAudioProcessor)
