@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="P22w0B" name="harmonizer-juce" projectType="audioplug" jucerVersion="5.4.7"
-              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              pluginFormats="buildStandalone,buildVST,buildVST3">
+              pluginCharacteristicsValue="pluginWantsMidiIn" pluginFormats="buildStandalone,buildVST,buildVST3">
   <MAINGROUP id="ZkGxks" name="harmonizer-juce">
     <GROUP id="{A9BD30E0-AFE4-11C2-98E5-0F2F07E08E4C}" name="Source">
       <FILE id="REPZGN" name="HarmonizerSynthesiserVoice.cpp" compile="1"
