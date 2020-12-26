@@ -5,6 +5,10 @@
               pluginFormats="buildStandalone,buildVST,buildVST3">
   <MAINGROUP id="ZkGxks" name="harmonizer-juce">
     <GROUP id="{A9BD30E0-AFE4-11C2-98E5-0F2F07E08E4C}" name="Source">
+      <FILE id="REPZGN" name="HarmonizerSynthesiserVoice.cpp" compile="1"
+            resource="0" file="Source/HarmonizerSynthesiserVoice.cpp"/>
+      <FILE id="y09cdT" name="HarmonizerSynthesiserVoice.h" compile="0" resource="0"
+            file="Source/HarmonizerSynthesiserVoice.h"/>
       <FILE id="iVEWRo" name="HarmonizerSound.h" compile="0" resource="0"
             file="Source/HarmonizerSound.h"/>
       <FILE id="LtVLe0" name="PhaseVocoder.cpp" compile="1" resource="0"
@@ -69,7 +73,7 @@
         <MODULEPATH id="juce_dsp" path="../../../../../usr/share/juce/modules"/>
       </MODULEPATHS>
     </VS2019>
-    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="aubio">
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" externalLibraries="aubio&#10;rubberband">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug"/>
         <CONFIGURATION isDebug="0" name="Release"/>

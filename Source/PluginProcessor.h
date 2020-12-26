@@ -58,13 +58,18 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    // HarmonizerSynthesiserVoice needs this information.
     float getCurrentPitch() { return currentPitch; }
+    const float *getInputBuffer() { return inputBuffer; }
+    int getInputBufferSize() { return inputBufferSize; }
+    int getExpectedBufferSize() { return expectedBufferSize; }
 
 private:
     PitchDetector *pitchDetector = nullptr;
     float currentPitch;
-
-    PhaseVocoder *phaseVocoder = nullptr;
+    const float *inputBuffer;
+    int inputBufferSize;
+    int expectedBufferSize;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizerjuceAudioProcessor)

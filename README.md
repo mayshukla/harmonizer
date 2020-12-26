@@ -13,5 +13,18 @@
 - HarmonizerSound: a simple description of a sound. Required by the Synthesizer
   class.
 
+## New Implementation Plan
+- Just use one RubberBandStretcher per voice
+- If this is too inefficient, they I made need to implement my own phase
+  vocoder.
+
+- HarmonizerSynthesizerVoice: responsible for pitch shifting one note and
+  adding that note to the output buffer.
+  - Needs a reference to HarmonizerAudioProcessor to get current pitch and
+    pointer to buffer with input signal (since Synthesiser class usually
+    doesn't expect input signal)
+- HarmonizerSound: a simple description of a sound. Required by the Synthesizer
+  class.
+
 ## Depedencies
 - [aubio](https://aubio.org/)

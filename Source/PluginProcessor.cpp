@@ -138,9 +138,8 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     if (pitchDetector == nullptr) {
         pitchDetector = new PitchDetector(getSampleRate());
     }
-    if (phaseVocoder == nullptr) {
-        phaseVocoder = new PhaseVocoder(getSampleRate(), getBlockSize());
-    }
+    expectedBufferSize = getBlockSize();
+
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -167,6 +166,8 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         // ..do something to the data...
         pitchDetector->doPitchDetection(channelData, buffer.getNumSamples());
         currentPitch = pitchDetector->getCurrentPitch();
+        inputBuffer = channelData;
+        inputBufferSize = buffer.getNumSamples();
     }
 }
 
