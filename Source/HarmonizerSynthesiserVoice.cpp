@@ -24,6 +24,7 @@ HarmonizerSynthesiserVoice::~HarmonizerSynthesiserVoice() {
 
 void HarmonizerSynthesiserVoice::setCurrentPlaybackSampleRate(double newRate) {
     // TODO also create new stretcher if sample rate changes
+    if (newRate == 0) return; // May be called with 0 before real rate is known.
     if (stretcher == nullptr) {
         RubberBand::RubberBandStretcher::Options stretcherOptions =
             RubberBand::RubberBandStretcher::OptionProcessRealTime
@@ -31,6 +32,7 @@ void HarmonizerSynthesiserVoice::setCurrentPlaybackSampleRate(double newRate) {
             | RubberBand::RubberBandStretcher::OptionTransientsSmooth
             | RubberBand::RubberBandStretcher::OptionThreadingAlways;
         stretcher = new RubberBand::RubberBandStretcher(
+            newRate,
             1, // channels
             stretcherOptions,
             1, // initialTimeRatio
