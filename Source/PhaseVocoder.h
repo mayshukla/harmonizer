@@ -18,21 +18,17 @@ public:
     ~PhaseVocoder();
 
     /**
-     * Do the forward transformation.
-     * Use getData() to get the transformed data.
+     * Do the forward transformation on input and store it in output.
+     * output should have size [number of windows][bufferSize]
+     * output is essential a 2D array stored in window-major order.
+     *     [[window0], [window1], [window2], ..]
      */
-    void doForward(float *input);
+    void doForward(const float *input, cvec_t **output);
 
     /**
-     * Do the reverse transformation on the data and store it in output.
+     * Do the reverse transformation on input and add it to output.
      */
-    void doReverse(float *output);
-
-    /**
-     * Note: the data array is owned by the PhaseVocoder.
-     * DO NOT attempt to free it.
-     */
-    cvec_t *getData() { return data; };
+    void doReverse(cvec_t **input, float *output);
 
 private:
     // aubio phase vocoder object
@@ -45,12 +41,9 @@ private:
     int windowSize = 32;
     // Number of samples between start of one phase vocoder window and next
     int hopSize = windowSize / 4;
+    // Numbfer of windows. Need to know bufferSize first.
+    int windowCount;
 
-    // Input buffer for aubio
-    fvec_t *aubioInputBuffer;
-    // Array of size bufferSize x windowSize
-    // [window0, window1, window2, ...]
-    cvec_t *data;
-    // Output buffer for aubio
-    fvec_t *aubioOutputBuffer;
+    // Input buffer for forward transform and output buffer for reverse.
+    fvec_t *aubioRealBuffer;
 };

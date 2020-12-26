@@ -5,6 +5,8 @@
               pluginFormats="buildStandalone,buildVST,buildVST3">
   <MAINGROUP id="ZkGxks" name="harmonizer-juce">
     <GROUP id="{A9BD30E0-AFE4-11C2-98E5-0F2F07E08E4C}" name="Source">
+      <FILE id="iVEWRo" name="HarmonizerSound.h" compile="0" resource="0"
+            file="Source/HarmonizerSound.h"/>
       <FILE id="LtVLe0" name="PhaseVocoder.cpp" compile="1" resource="0"
             file="Source/PhaseVocoder.cpp"/>
       <FILE id="FpDHQH" name="PhaseVocoder.h" compile="0" resource="0" file="Source/PhaseVocoder.h"/>
