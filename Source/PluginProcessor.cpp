@@ -103,6 +103,10 @@ void HarmonizerjuceAudioProcessor::prepareToPlay (double sampleRate, int samples
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    expectedBufferSize = samplesPerBlock; // TODO get rid of this
+    for (int i = 0; i < synthesiser.getNumVoices(); ++i) {
+        static_cast<HarmonizerSynthesiserVoice*>(synthesiser.getVoice(i))->setExpectedBufferSize(samplesPerBlock);
+    }
     synthesiser.setCurrentPlaybackSampleRate(sampleRate);
 
     // Must initialize pitchDetector here because this is the soonest we know
@@ -111,7 +115,6 @@ void HarmonizerjuceAudioProcessor::prepareToPlay (double sampleRate, int samples
     if (pitchDetector == nullptr) {
         pitchDetector = new PitchDetector(sampleRate);
     }
-    expectedBufferSize = samplesPerBlock;
 }
 
 void HarmonizerjuceAudioProcessor::releaseResources()

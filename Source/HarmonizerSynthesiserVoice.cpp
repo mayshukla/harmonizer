@@ -42,15 +42,22 @@ void HarmonizerSynthesiserVoice::setCurrentPlaybackSampleRate(double newRate) {
     SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
 }
 
-void HarmonizerSynthesiserVoice::startNote(int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition) {
-    // We don't know the expected block size until the processor starts processing.
+void HarmonizerSynthesiserVoice::setExpectedBufferSize(int size) {
     // TODO what if block size changes?
     if (bufferSize == -1) {
-        bufferSize = processor.getExpectedBufferSize();
+        bufferSize = size;
         stretcherOutputBuffer = new float[bufferSize];
     }
+}
+
+void HarmonizerSynthesiserVoice::startNote(int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition) {
     float targetFreq = aubio_miditofreq(midiNoteNumber);
     float pitchScaleFactor = targetFreq / processor.getCurrentPitch();
+    if (pitchScaleFactor < 0.01 || std::isnan(pitchScaleFactor)) {
+        // Weird pitchScaleFactor probably a glitch.
+        // Set to 1 to be safe.
+        pitchScaleFactor = 1;
+    }
     stretcher->setPitchScale(pitchScaleFactor);
 }
 
