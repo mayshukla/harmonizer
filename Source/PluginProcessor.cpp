@@ -9,6 +9,8 @@
 */
 
 #include "PluginProcessor.h"
+#include "HarmonizerSound.h"
+#include "HarmonizerSynthesiserVoice.h"
 #include "PluginEditor.h"
 
 //==============================================================================
@@ -24,6 +26,10 @@ HarmonizerjuceAudioProcessor::HarmonizerjuceAudioProcessor()
                        )
 #endif
 {
+    for (int i = 0; i < numVoices; ++i) {
+        synthesiser.addVoice(new HarmonizerSynthesiserVoice(*this));
+    }
+    synthesiser.addSound(new HarmonizerSound());
 }
 
 HarmonizerjuceAudioProcessor::~HarmonizerjuceAudioProcessor()
@@ -97,6 +103,15 @@ void HarmonizerjuceAudioProcessor::prepareToPlay (double sampleRate, int samples
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    synthesiser.setCurrentPlaybackSampleRate(sampleRate);
+
+    // Must initialize pitchDetector here because this is the soonest we know
+    // block size and sample rate.
+    // TODO what if block size and sample rate change?
+    if (pitchDetector == nullptr) {
+        pitchDetector = new PitchDetector(sampleRate);
+    }
+    expectedBufferSize = samplesPerBlock;
 }
 
 void HarmonizerjuceAudioProcessor::releaseResources()
@@ -132,14 +147,6 @@ bool HarmonizerjuceAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 
 void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-    // Must initialize pitchDetector here because this is the only place we know
-    // block size and sample rate.
-    // TODO what if block size and sample rate change?
-    if (pitchDetector == nullptr) {
-        pitchDetector = new PitchDetector(getSampleRate());
-    }
-    expectedBufferSize = getBlockSize();
-
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -168,6 +175,8 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         currentPitch = pitchDetector->getCurrentPitch();
         inputBuffer = channelData;
         inputBufferSize = buffer.getNumSamples();
+
+        synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     }
 }
 

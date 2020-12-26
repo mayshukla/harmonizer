@@ -71,6 +71,9 @@ private:
     int inputBufferSize;
     int expectedBufferSize;
 
+    static constexpr int numVoices = 4;
+    Synthesiser synthesiser;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HarmonizerjuceAudioProcessor)
 };
