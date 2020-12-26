@@ -45,4 +45,6 @@ private:
 
     float *stretcherOutputBuffer = nullptr;
     int bufferSize = -1;
+
+    int midiNoteNumber = 65;
 };

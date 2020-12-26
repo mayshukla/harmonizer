@@ -51,6 +51,10 @@ void HarmonizerSynthesiserVoice::setExpectedBufferSize(int size) {
 }
 
 void HarmonizerSynthesiserVoice::startNote(int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition) {
+    this->midiNoteNumber = midiNoteNumber;
+}
+
+void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
     float targetFreq = aubio_miditofreq(midiNoteNumber);
     float pitchScaleFactor = targetFreq / processor.getCurrentPitch();
     if (pitchScaleFactor < 0.01 || std::isnan(pitchScaleFactor)) {
@@ -59,9 +63,6 @@ void HarmonizerSynthesiserVoice::startNote(int midiNoteNumber, float velocity, S
         pitchScaleFactor = 1;
     }
     stretcher->setPitchScale(pitchScaleFactor);
-}
-
-void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
     const float *inputBuffer = processor.getInputBuffer();
     stretcher->process(&inputBuffer, processor.getInputBufferSize(), false);
     stretcher->retrieve(&stretcherOutputBuffer, processor.getInputBufferSize());
