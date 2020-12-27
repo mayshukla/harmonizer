@@ -10,6 +10,8 @@
 
 #include "PhaseVocoder.h"
 
+#include <iostream> // TODO remove
+
 #include <aubio/aubio.h>
 
 PhaseVocoder::PhaseVocoder(int bufferSize, int sampleRate)
@@ -25,11 +27,12 @@ PhaseVocoder::~PhaseVocoder() {
     del_fvec(aubioRealBuffer);
 }
 
-void PhaseVocoder::doForward(const float *input, cvec_t **output) {
+void PhaseVocoder::doForward(const float *input, cvec_t **output, int numSamples) {
     for (int window = 0; window < windowCount; ++window) {
         // Move input signal into buffer to supply to aubio
         int offset = window * windowSize;
         for (int i = 0; i < hopSize; ++i) {
+          if ((offset + i) > numSamples) break;
           fvec_set_sample(aubioRealBuffer, input[offset + i], i);
         }
 
@@ -37,13 +40,14 @@ void PhaseVocoder::doForward(const float *input, cvec_t **output) {
     }
 }
 
-void PhaseVocoder::doReverse(cvec_t **input, float *output) {
+void PhaseVocoder::doReverse(cvec_t **input, float *output, int numSamples) {
     for (int window = 0; window < windowCount; ++window) {
         aubio_pvoc_rdo(pvoc, input[window], aubioRealBuffer);
 
         int offset = window * windowSize;
         for (int i = 0; i < hopSize; ++i) {
-            output[offset + i] = fvec_get_sample(aubioRealBuffer, i);
+            if ((offset + i) > numSamples) break;
+            output[offset + i] += fvec_get_sample(aubioRealBuffer, i);
         }
     }
 }

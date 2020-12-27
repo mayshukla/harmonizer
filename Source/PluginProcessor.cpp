@@ -12,6 +12,7 @@
 #include "HarmonizerSound.h"
 #include "HarmonizerSynthesiserVoice.h"
 #include "PluginEditor.h"
+#include <aubio/cvec.h>
 
 //==============================================================================
 HarmonizerjuceAudioProcessor::HarmonizerjuceAudioProcessor()
@@ -115,6 +116,16 @@ void HarmonizerjuceAudioProcessor::prepareToPlay (double sampleRate, int samples
     if (pitchDetector == nullptr) {
         pitchDetector = new PitchDetector(sampleRate);
     }
+
+    if (phaseVocoder == nullptr) {
+        phaseVocoder = new PhaseVocoder(sampleRate, samplesPerBlock);
+    }
+    if (phaseVocoderFftWindows == nullptr) {
+        phaseVocoderFftWindows = new cvec_t * [phaseVocoder->getWindowCount()];
+        for (int i = 0; i < phaseVocoder->getWindowCount(); ++i) {
+            phaseVocoderFftWindows[i] = new_cvec(phaseVocoder->getWindowSize());
+        }
+    }
 }
 
 void HarmonizerjuceAudioProcessor::releaseResources()
@@ -181,7 +192,20 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         inputBuffer = channelData;
         inputBufferSize = buffer.getNumSamples();
 
-        synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+        //synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+        // Testing phase vocoder
+
+        // Forward transform
+        phaseVocoder->doForward(channelData, phaseVocoderFftWindows, buffer.getNumSamples());
+
+        // Clear output signal
+        for (int i = 0; i < buffer.getNumSamples(); ++i) {
+            channelData[i] = 0;
+        }
+
+        // Reverse transform
+        phaseVocoder->doReverse(phaseVocoderFftWindows, channelData, buffer.getNumSamples());
     }
 }
 

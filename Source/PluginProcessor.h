@@ -71,6 +71,10 @@ private:
     int inputBufferSize;
     int expectedBufferSize;
 
+    PhaseVocoder *phaseVocoder = nullptr;
+    cvec_t **phaseVocoderFftWindows = nullptr;
+    int windowsCount;
+
     static constexpr int numVoices = 4;
     Synthesiser synthesiser;
 

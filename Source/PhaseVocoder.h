@@ -17,18 +17,24 @@ public:
     PhaseVocoder(int sampleRate, int bufferSize);
     ~PhaseVocoder();
 
+    int getWindowCount() { return windowCount; }
+
+    int getWindowSize() { return windowSize; }
+
     /**
+     * TODO: allow caller to specify size of input in case it's smaller than
+     * expected.
      * Do the forward transformation on input and store it in output.
      * output should have size [number of windows][bufferSize]
      * output is essential a 2D array stored in window-major order.
      *     [[window0], [window1], [window2], ..]
      */
-    void doForward(const float *input, cvec_t **output);
+    void doForward(const float *input, cvec_t **output, int numSamples);
 
     /**
-     * Do the reverse transformation on input and add it to output.
+     * Do the reverse transformation on input and ADD it to output.
      */
-    void doReverse(cvec_t **input, float *output);
+    void doReverse(cvec_t **input, float *output, int numSamples);
 
 private:
     // aubio phase vocoder object
@@ -38,7 +44,7 @@ private:
     // Size of buffer processed by Processor
     int bufferSize;
     // Size of window for phase vocoder
-    int windowSize = 32;
+    int windowSize = 64;
     // Number of samples between start of one phase vocoder window and next
     int hopSize = windowSize / 4;
     // Numbfer of windows. Need to know bufferSize first.
