@@ -32,5 +32,5 @@ private:
     fvec_t *aubioInputBuffer;
     // A single float representing pitch.
     fvec_t *aubioOutputBuffer;
-    float currentPitch;
+    float currentPitch = 440;
 };

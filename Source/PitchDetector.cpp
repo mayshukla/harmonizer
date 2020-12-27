@@ -10,8 +10,7 @@
 
 #include "PitchDetector.h"
 
-PitchDetector::PitchDetector(int sampleRate)
-    : currentPitch(1) {
+PitchDetector::PitchDetector(int sampleRate) {
     aubioInputBuffer = new_fvec(bufferSize);
     aubioOutputBuffer = new_fvec(1);
 

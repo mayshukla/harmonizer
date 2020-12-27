@@ -66,7 +66,7 @@ public:
 
 private:
     PitchDetector *pitchDetector = nullptr;
-    float currentPitch;
+    float currentPitch = 440;
     const float *inputBuffer;
     int inputBufferSize;
     int expectedBufferSize;
