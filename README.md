@@ -26,5 +26,22 @@
 - HarmonizerSound: a simple description of a sound. Required by the Synthesizer
   class.
 
+## New New Implementation Plan
+- voices do pitch shifting and add their own shifted signal to the frequency
+  domain
+- this way there is only one forward and one reverse pvoc operation
+
+- PhaseVocoder: wrapper around aubio pvoc
+  - doForward: float[] -> cvec_t[][]
+  - doReverse: cvec_t[][] -> float[]
+- HarmonizerAudioProcessor: holds a Synthesizer, does setup for Synthesizer (e.g.
+  add voices), does forward AND reverse phase vocoder transform
+- HarmonizerSynthesizerVoice: responsible for pitch shifting one note and
+  adding that note to the shared cvec_t
+  - Needs a reference to HarmonizerAudioProcessor to get forward phase vocoder
+    signal and current pitch
+- HarmonizerSound: a simple description of a sound. Required by the Synthesizer
+  class.
+
 ## Depedencies
 - [aubio](https://aubio.org/)

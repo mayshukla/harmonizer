@@ -45,5 +45,7 @@ private:
     int windowCount;
 
     // Input buffer for forward transform and output buffer for reverse.
+    // This only needs to be size hopSize. The aubio library will handle
+    // overlapping and windowing, we just supply the new portion of the signal.
     fvec_t *aubioRealBuffer;
 };
