@@ -57,6 +57,7 @@ void HarmonizerSynthesiserVoice::startNote(int midiNoteNumber, float velocity, S
 
 void HarmonizerSynthesiserVoice::stopNote(float velocity, bool allowTailOff) {
     voiceOn = false;
+    clearCurrentNote();
 }
 
 void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
