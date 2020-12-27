@@ -52,6 +52,11 @@ void HarmonizerSynthesiserVoice::setExpectedBufferSize(int size) {
 
 void HarmonizerSynthesiserVoice::startNote(int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition) {
     this->midiNoteNumber = midiNoteNumber;
+    voiceOn = true;
+}
+
+void HarmonizerSynthesiserVoice::stopNote(float velocity, bool allowTailOff) {
+    voiceOn = false;
 }
 
 void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
@@ -67,6 +72,7 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
     stretcher->process(&inputBuffer, processor.getInputBufferSize(), false);
     stretcher->retrieve(&stretcherOutputBuffer, processor.getInputBufferSize());
 
+    if (!voiceOn) return;
     // TODO which way should I nest these loops?
     for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
         for (int i = startSample; i < startSample + numSamples; ++i) {

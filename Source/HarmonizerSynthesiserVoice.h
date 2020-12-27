@@ -30,7 +30,7 @@ public:
     virtual bool canPlaySound (juce::SynthesiserSound* sound) override {
         return dynamic_cast<HarmonizerSound*> (sound) != nullptr;
     }
-    virtual void stopNote(float velocity, bool allowTailOff) override {}
+    virtual void stopNote(float velocity, bool allowTailOff) override;
     virtual void pitchWheelMoved(int newPitchWheelValue) override {}
     virtual void controllerMoved(int controllerNumber, int newControllerValue) override {}
 
@@ -47,4 +47,7 @@ private:
     int bufferSize = -1;
 
     int midiNoteNumber = 65;
+
+    // Whether or not voice should be played
+    bool voiceOn = false;
 };
