@@ -1,3 +1,6 @@
+## TODO
+- figure out if i'm using pvoc correctly (should i do forward/reverse within one window?)
+
 ## Implementation Plan
 - PhaseVocoder: wrapper around aubio pvoc
   - doForward: float[] -> cvec_t[][]
