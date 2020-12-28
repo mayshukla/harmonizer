@@ -14,8 +14,8 @@
 
 #include <aubio/aubio.h>
 
-PhaseVocoder::PhaseVocoder(int bufferSize, int sampleRate)
-    : bufferSize(bufferSize), sampleRate(sampleRate) {
+PhaseVocoder::PhaseVocoder(int sampleRate, int bufferSize)
+    : sampleRate(sampleRate), bufferSize(bufferSize) {
     pvoc = new_aubio_pvoc(windowSize, hopSize);
     aubioRealBuffer = new_fvec(hopSize);
 
