@@ -1,5 +1,7 @@
 ## TODO
 - figure out if i'm using pvoc correctly (should i do forward/reverse within one window?)
+  - update: I don't think this is the problem. I tried it that way and it was
+    still bad
 
 ## Implementation Plan
 - PhaseVocoder: wrapper around aubio pvoc

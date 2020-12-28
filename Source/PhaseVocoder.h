@@ -36,6 +36,8 @@ public:
      */
     void doReverse(cvec_t **input, float *output, int numSamples);
 
+    void doForwardAndReverse(float *input, cvec_t **output, int numSamples);
+
 private:
     // aubio phase vocoder object
     aubio_pvoc_t *pvoc;
