@@ -179,32 +179,36 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    //for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    // TODO: detect pitch indepedently on each channel
-    for (int channel = 0; channel < 1; ++channel)
+    for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
-        pitchDetector->doPitchDetection(channelData, buffer.getNumSamples());
-        currentPitch = pitchDetector->getCurrentPitch();
-        inputBuffer = channelData;
-        inputBufferSize = buffer.getNumSamples();
+        if (channel == 0) {
+            // ..do something to the data...
+            pitchDetector->doPitchDetection(channelData, buffer.getNumSamples());
+            currentPitch = pitchDetector->getCurrentPitch();
+            inputBuffer = channelData;
+            inputBufferSize = buffer.getNumSamples();
 
-        //synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+            //synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+            // Testing phase vocoder
 
-        // Testing phase vocoder
+            // Forward transform
+            phaseVocoder->doForward(channelData, phaseVocoderFftWindows, buffer.getNumSamples());
 
-        // Forward transform
-        phaseVocoder->doForward(channelData, phaseVocoderFftWindows, buffer.getNumSamples());
+            // Clear output signal
+            for (int i = 0; i < buffer.getNumSamples(); ++i) {
+                channelData[i] = 0;
+            }
 
-        // Clear output signal
-        for (int i = 0; i < buffer.getNumSamples(); ++i) {
-            channelData[i] = 0;
+            // Reverse transform
+            phaseVocoder->doReverse(phaseVocoderFftWindows, channelData, buffer.getNumSamples());
+        } else {
+            // Clear output signal
+            //for (int i = 0; i < buffer.getNumSamples(); ++i) {
+                //channelData[i] = 0;
+            //}
         }
-
-        // Reverse transform
-        phaseVocoder->doReverse(phaseVocoderFftWindows, channelData, buffer.getNumSamples());
     }
 }
 
