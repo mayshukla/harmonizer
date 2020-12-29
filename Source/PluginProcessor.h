@@ -63,6 +63,9 @@ public:
     const float *getInputBuffer() { return inputBuffer; }
     int getInputBufferSize() { return inputBufferSize; }
     int getExpectedBufferSize() { return expectedBufferSize; }
+    cvec_t **getPhaseVocoderFFtWindows() { return phaseVocoderFftWindows; }
+    int getWindowCount() { return phaseVocoder->getWindowCount(); }
+    int getWindowSize() { return phaseVocoder->getWindowSize(); }
 
 private:
     PitchDetector *pitchDetector = nullptr;
@@ -73,7 +76,6 @@ private:
 
     PhaseVocoder *phaseVocoder = nullptr;
     cvec_t **phaseVocoderFftWindows = nullptr;
-    int windowsCount;
 
     static constexpr int numVoices = 4;
     Synthesiser synthesiser;

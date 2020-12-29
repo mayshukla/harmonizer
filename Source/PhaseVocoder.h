@@ -17,9 +17,11 @@ public:
     PhaseVocoder(int sampleRate, int bufferSize);
     ~PhaseVocoder();
 
+    int getWindowSize() { return windowSize; }
+
     int getWindowCount() { return windowCount; }
 
-    int getWindowSize() { return windowSize; }
+    int getHopSize() { return hopSize; }
 
     /**
      * TODO: allow caller to specify size of input in case it's smaller than

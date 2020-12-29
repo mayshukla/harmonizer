@@ -11,7 +11,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include <rubberband/RubberBandStretcher.h>
 
 #include "HarmonizerSound.h"
 #include "PluginProcessor.h"
@@ -20,9 +19,6 @@ class HarmonizerSynthesiserVoice : public juce::SynthesiserVoice {
 public:
     HarmonizerSynthesiserVoice(HarmonizerjuceAudioProcessor &processor);
     ~HarmonizerSynthesiserVoice();
-
-    // Must be called before renderNextBlock
-    virtual void setCurrentPlaybackSampleRate(double newRate) override;
 
     virtual void startNote(int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition) override;
     virtual void renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) override;
@@ -35,16 +31,18 @@ public:
     virtual void controllerMoved(int controllerNumber, int newControllerValue) override {}
 
     // Must be called before renderNextBlock
-    void setExpectedBufferSize(int size);
+    void prepareToPlay(int sampleRate, int bufferSize, int windowSize, int windowCount, int hopSize);
 
 private:
     // Reference to the owning AudioProcessor.
     // This is where the voice gets the current pitch.
     HarmonizerjuceAudioProcessor &processor;
-    RubberBand::RubberBandStretcher *stretcher = nullptr;
 
-    float *stretcherOutputBuffer = nullptr;
+    int sampleRate = -1;
     int bufferSize = -1;
+    int windowSize = -1;
+    int windowCount = -1;
+    int hopSize = -1;
 
     int midiNoteNumber = 65;
 

@@ -11,42 +11,30 @@
 #include "HarmonizerSynthesiserVoice.h"
 
 #include <aubio/musicutils.h>
-#include <rubberband/RubberBandStretcher.h>
 
 HarmonizerSynthesiserVoice::HarmonizerSynthesiserVoice(HarmonizerjuceAudioProcessor &processor)
     : processor(processor) {
 }
 
 HarmonizerSynthesiserVoice::~HarmonizerSynthesiserVoice() {
-    delete stretcher;
-    if (stretcherOutputBuffer != nullptr) delete stretcherOutputBuffer;
 }
 
-void HarmonizerSynthesiserVoice::setCurrentPlaybackSampleRate(double newRate) {
-    // TODO also create new stretcher if sample rate changes
-    if (newRate == 0) return; // May be called with 0 before real rate is known.
-    if (stretcher == nullptr) {
-        RubberBand::RubberBandStretcher::Options stretcherOptions =
-            RubberBand::RubberBandStretcher::OptionProcessRealTime
-            | RubberBand::RubberBandStretcher::OptionPitchHighConsistency
-            | RubberBand::RubberBandStretcher::OptionTransientsSmooth
-            | RubberBand::RubberBandStretcher::OptionThreadingAlways;
-        stretcher = new RubberBand::RubberBandStretcher(
-            newRate,
-            1, // channels
-            stretcherOptions,
-            1, // initialTimeRatio
-            1  // initialPitchScale
-        );
+void HarmonizerSynthesiserVoice::prepareToPlay(int sampleRate, int bufferSize, int windowSize, int windowCount, int hopSize) {
+    // TODO handle these parameters changing dynamically
+    if (this->sampleRate == -1) {
+        this->sampleRate = sampleRate;
     }
-    SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
-}
-
-void HarmonizerSynthesiserVoice::setExpectedBufferSize(int size) {
-    // TODO what if block size changes?
-    if (bufferSize == -1) {
-        bufferSize = size;
-        stretcherOutputBuffer = new float[bufferSize];
+    if (this->bufferSize == -1) {
+        this->bufferSize = bufferSize;
+    }
+    if (this->windowSize == -1) {
+        this->windowSize = windowSize;
+    }
+    if (this->windowCount == -1) {
+        this->windowCount = windowCount;
+    }
+    if (this->hopSize == -1) {
+        this->hopSize = hopSize;
     }
 }
 
@@ -68,16 +56,16 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
         // Set to 1 to be safe.
         pitchScaleFactor = 1;
     }
-    stretcher->setPitchScale(pitchScaleFactor);
-    const float *inputBuffer = processor.getInputBuffer();
-    stretcher->process(&inputBuffer, processor.getInputBufferSize(), false);
-    stretcher->retrieve(&stretcherOutputBuffer, processor.getInputBufferSize());
+    //stretcher->setPitchScale(pitchScaleFactor);
+    //const float *inputBuffer = processor.getInputBuffer();
+    //stretcher->process(&inputBuffer, processor.getInputBufferSize(), false);
+    //stretcher->retrieve(&stretcherOutputBuffer, processor.getInputBufferSize());
 
     if (!voiceOn) return;
     // TODO which way should I nest these loops?
     for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
         for (int i = startSample; i < startSample + numSamples; ++i) {
-            outputBuffer.addSample(channel, i, stretcherOutputBuffer[i]);
+            //outputBuffer.addSample(channel, i, stretcherOutputBuffer[i]);
         }
     }
 }
