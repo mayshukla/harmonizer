@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 
 #include "HarmonizerSound.h"
+#include "MultiArray.h"
 #include "PluginProcessor.h"
 
 class HarmonizerSynthesiserVoice : public juce::SynthesiserVoice {
@@ -43,6 +44,15 @@ private:
     int windowSize = -1;
     int windowCount = -1;
     int hopSize = -1;
+    int overlapFactor = -1;
+    float freqPerBin = -1; // Freq of bin 1
+
+    // Arrays used for intermediate calculations
+    MultiArray<float> *actualFreqs = nullptr;
+    float *previousPhase = nullptr;
+    MultiArray<float> *newMags = nullptr;
+    MultiArray<float> *newFreqs = nullptr;
+    float *phaseAccum = nullptr;
 
     int midiNoteNumber = 65;
 

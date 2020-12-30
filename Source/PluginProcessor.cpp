@@ -144,6 +144,8 @@ void HarmonizerjuceAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+
+    // TODO free fft windows here
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
