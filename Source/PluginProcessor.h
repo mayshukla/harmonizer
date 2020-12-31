@@ -64,7 +64,6 @@ public:
     int getInputBufferSize() { return inputBufferSize; }
     int getExpectedBufferSize() { return expectedBufferSize; }
     cvec_t **getInputFftWindows() { return inputFftWindows; }
-    cvec_t **getOutputFftWindows() { return outputFftWindows; }
     int getWindowCount() { return phaseVocoder->getWindowCount(); }
     int getWindowSize() { return phaseVocoder->getWindowSize(); }
 
@@ -77,7 +76,6 @@ private:
 
     PhaseVocoder *phaseVocoder = nullptr;
     cvec_t **inputFftWindows = nullptr;
-    cvec_t **outputFftWindows = nullptr;
 
     static constexpr int numVoices = 4;
     Synthesiser synthesiser;

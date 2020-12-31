@@ -122,20 +122,10 @@ void HarmonizerjuceAudioProcessor::prepareToPlay (double sampleRate, int samples
             inputFftWindows[i] = new_cvec(phaseVocoder->getWindowSize());
         }
     }
-    if (outputFftWindows == nullptr) {
-        outputFftWindows = new cvec_t * [phaseVocoder->getWindowCount()];
-        for (int i = 0; i < phaseVocoder->getWindowCount(); ++i) {
-            outputFftWindows[i] = new_cvec(phaseVocoder->getWindowSize());
-        }
-    }
 
     for (int i = 0; i < synthesiser.getNumVoices(); ++i) {
         static_cast<HarmonizerSynthesiserVoice*>(synthesiser.getVoice(i))
-            ->prepareToPlay(sampleRate,
-                            samplesPerBlock, 
-                            phaseVocoder->getWindowSize(),
-                            phaseVocoder->getWindowCount(),
-                            phaseVocoder->getHopSize());
+            ->prepareToPlay(sampleRate, samplesPerBlock);
     }
     synthesiser.setCurrentPlaybackSampleRate(sampleRate);
 }
@@ -204,14 +194,6 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
             inputBuffer = channelData;
             inputBufferSize = buffer.getNumSamples();
 
-            // Clear output fft windows
-            for (int window = 0; window < phaseVocoder->getWindowCount(); ++window) {
-                for (int bin = 0; bin < phaseVocoder->getWindowSize() / 2 + 1; ++bin) {
-                    cvec_norm_set_sample(outputFftWindows[window], 0, bin);
-                    cvec_phas_set_sample(outputFftWindows[window], 0, bin);
-                }
-            }
-
             // Forward transform
             phaseVocoder->doForward(channelData, inputFftWindows, buffer.getNumSamples());
 
@@ -220,11 +202,7 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
                 channelData[i] = 0;
             }
 
-            // The synthesizer will fill outputFftWindows
             synthesiser.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
-
-            // Reverse transform
-            phaseVocoder->doReverse(outputFftWindows, channelData, buffer.getNumSamples());
         } else {
             // Clear output signal
             //for (int i = 0; i < buffer.getNumSamples(); ++i) {

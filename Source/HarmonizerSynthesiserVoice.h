@@ -14,6 +14,7 @@
 
 #include "HarmonizerSound.h"
 #include "MultiArray.h"
+#include "PhaseVocoder.h"
 #include "PluginProcessor.h"
 
 class HarmonizerSynthesiserVoice : public juce::SynthesiserVoice {
@@ -32,12 +33,14 @@ public:
     virtual void controllerMoved(int controllerNumber, int newControllerValue) override {}
 
     // Must be called before renderNextBlock
-    void prepareToPlay(int sampleRate, int bufferSize, int windowSize, int windowCount, int hopSize);
+    void prepareToPlay(int sampleRate, int bufferSize);
 
 private:
     // Reference to the owning AudioProcessor.
     // This is where the voice gets the current pitch.
     HarmonizerjuceAudioProcessor &processor;
+
+    PhaseVocoder *phaseVocoder = nullptr;
 
     int sampleRate = -1;
     int bufferSize = -1;
@@ -48,6 +51,7 @@ private:
     float freqPerBin = -1; // Freq of bin 1
 
     // Arrays used for intermediate calculations
+    cvec_t **outputFftWindows = nullptr;
     MultiArray<float> *actualFreqs = nullptr;
     float *previousPhase = nullptr;
     MultiArray<float> *newMags = nullptr;

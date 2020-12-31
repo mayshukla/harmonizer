@@ -26,7 +26,11 @@ HarmonizerSynthesiserVoice::~HarmonizerSynthesiserVoice() {
     delete phaseAccum;
 }
 
-void HarmonizerSynthesiserVoice::prepareToPlay(int sampleRate, int bufferSize, int windowSize, int windowCount, int hopSize) {
+void HarmonizerSynthesiserVoice::prepareToPlay(int sampleRate, int bufferSize) {
+    if (phaseVocoder == nullptr) {
+        phaseVocoder = new PhaseVocoder(sampleRate, bufferSize);
+    }
+
     // TODO handle these parameters changing dynamically
     if (this->sampleRate == -1) {
         this->sampleRate = sampleRate;
@@ -35,19 +39,26 @@ void HarmonizerSynthesiserVoice::prepareToPlay(int sampleRate, int bufferSize, i
         this->bufferSize = bufferSize;
     }
     if (this->windowSize == -1) {
-        this->windowSize = windowSize;
+        this->windowSize = phaseVocoder->getWindowSize();
     }
     if (this->windowCount == -1) {
-        this->windowCount = windowCount;
+        this->windowCount = phaseVocoder->getWindowCount();
     }
     if (this->hopSize == -1) {
-        this->hopSize = hopSize;
+        this->hopSize = phaseVocoder->getHopSize();
     }
     if (overlapFactor == -1) {
         overlapFactor = windowSize / hopSize;
     }
     if (freqPerBin == -1) {
         freqPerBin = ((float)sampleRate) / ((float)windowSize);
+    }
+
+    if (outputFftWindows == nullptr) {
+        outputFftWindows = new cvec_t * [phaseVocoder->getWindowCount()];
+        for (int i = 0; i < phaseVocoder->getWindowCount(); ++i) {
+            outputFftWindows[i] = new_cvec(phaseVocoder->getWindowSize());
+        }
     }
 
     if (actualFreqs == nullptr) {
@@ -92,6 +103,14 @@ static inline float constrainAngle(float angle) {
 }
 
 void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
+    // Clear output fft windows
+    for (int window = 0; window < windowCount; ++window) {
+        for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
+            cvec_norm_set_sample(outputFftWindows[window], 0, bin);
+            cvec_phas_set_sample(outputFftWindows[window], 0, bin);
+        }
+    }
+
     float targetFreq = aubio_miditofreq(midiNoteNumber);
     float pitchScaleFactor = targetFreq / processor.getCurrentPitch();
     if (pitchScaleFactor < 0.01 || std::isnan(pitchScaleFactor)) {
@@ -139,8 +158,6 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
             }
         }
 
-        cvec_t **outputFftWindows = processor.getOutputFftWindows();
-
         // Calculate new phases based on scaled frequencies.
         for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
             float deltaFreq = newFreqs->get(window, bin)
@@ -158,12 +175,14 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
             double mag = newMags->get(window, bin);
 
             // Add mag and phase to existing data
-            if (voiceOn) {
-                mag +=  cvec_norm_get_sample(outputFftWindows[window], bin);
-                cvec_norm_set_sample(outputFftWindows[window], mag, bin);
-                phase +=  cvec_phas_get_sample(outputFftWindows[window], bin);
-                cvec_phas_set_sample(outputFftWindows[window], phase, bin);
-            }
+            mag +=  cvec_norm_get_sample(outputFftWindows[window], bin);
+            cvec_norm_set_sample(outputFftWindows[window], mag, bin);
+            phase +=  cvec_phas_get_sample(outputFftWindows[window], bin);
+            cvec_phas_set_sample(outputFftWindows[window], phase, bin);
         }
+    }
+
+    if (voiceOn) {
+        phaseVocoder->doReverse(outputFftWindows, outputBuffer.getWritePointer(0), numSamples);
     }
 }
