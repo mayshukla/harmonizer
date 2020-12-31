@@ -102,10 +102,10 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
 
     cvec_t **inputFftWindows = processor.getInputFftWindows();
 
-    // Estimate actual frequency of each bin based on phase difference between
-    // each window.
-    for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
-        for (int window = 0; window < windowCount; ++window) {
+    for (int window = 0; window < windowCount; ++window) {
+        // Estimate actual frequency of each bin based on phase difference
+        // between each window.
+        for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
             float phase = cvec_phas_get_sample(inputFftWindows[window], bin);
             float phaseDiff = phase - previousPhase[bin];
             previousPhase[bin] = phase;
@@ -123,13 +123,11 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
 
             actualFreqs->set(window, bin, actualFreq);
         }
-    }
 
-    // Calculate new magnitudes by resampling and scale frequencies.
-    newMags->clear();
-    newFreqs->clear();
-    for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
-        for (int window = 0; window < windowCount; ++window) {
+        // Calculate new magnitudes by resampling and scale frequencies.
+        newMags->clear();
+        newFreqs->clear();
+        for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
             int newBin = bin * pitchScaleFactor;
             if (newBin < windowSize / 2 + 1) {
                 // Resample magnitude
@@ -140,13 +138,11 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
                 newFreqs->set(window, newBin, oldFreq * pitchScaleFactor);
             }
         }
-    }
 
-    cvec_t **outputFftWindows = processor.getOutputFftWindows();
+        cvec_t **outputFftWindows = processor.getOutputFftWindows();
 
-    // Calculate new phases based on scaled frequencies.
-    for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
-        for (int window = 0; window < windowCount; ++window) {
+        // Calculate new phases based on scaled frequencies.
+        for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
             float deltaFreq = newFreqs->get(window, bin)
                 - ((float)bin) * freqPerBin;
 
