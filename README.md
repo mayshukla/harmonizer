@@ -1,5 +1,6 @@
 ## TODO
 - make it mono only
+- figure out why polyphony doesn't work
 
 ## Implementation Plan
 - PhaseVocoder: wrapper around aubio pvoc
