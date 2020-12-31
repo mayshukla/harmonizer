@@ -51,19 +51,19 @@ void HarmonizerSynthesiserVoice::prepareToPlay(int sampleRate, int bufferSize, i
     }
 
     if (actualFreqs == nullptr) {
-        actualFreqs = new MultiArray<float>(windowCount, windowSize);
+        actualFreqs = new MultiArray<float>(windowCount, windowSize / 2 + 1);
     }
     if (previousPhase == nullptr) {
-        previousPhase = new float[windowSize];
+        previousPhase = new float[windowSize / 2 + 1];
     }
     if (newMags == nullptr) {
-        newMags = new MultiArray<float>(windowCount, windowSize);
+        newMags = new MultiArray<float>(windowCount, windowSize / 2 +1);
     }
     if (newFreqs == nullptr) {
-        newFreqs = new MultiArray<float>(windowCount, windowSize);
+        newFreqs = new MultiArray<float>(windowCount, windowSize / 2 + 1);
     }
     if (phaseAccum == nullptr) {
-        phaseAccum = new float[windowSize];
+        phaseAccum = new float[windowSize / 2 + 1];
     }
 }
 
@@ -92,8 +92,6 @@ static inline float constrainAngle(float angle) {
 }
 
 void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
-    if (!voiceOn) return;
-
     float targetFreq = aubio_miditofreq(midiNoteNumber);
     float pitchScaleFactor = targetFreq / processor.getCurrentPitch();
     if (pitchScaleFactor < 0.01 || std::isnan(pitchScaleFactor)) {
@@ -164,10 +162,12 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
             double mag = newMags->get(window, bin);
 
             // Add mag and phase to existing data
-            mag +=  cvec_norm_get_sample(outputFftWindows[window], bin);
-            cvec_norm_set_sample(outputFftWindows[window], mag, bin);
-            phase +=  cvec_phas_get_sample(outputFftWindows[window], bin);
-            cvec_phas_set_sample(outputFftWindows[window], phase, bin);
+            if (voiceOn) {
+                mag +=  cvec_norm_get_sample(outputFftWindows[window], bin);
+                cvec_norm_set_sample(outputFftWindows[window], mag, bin);
+                phase +=  cvec_phas_get_sample(outputFftWindows[window], bin);
+                cvec_phas_set_sample(outputFftWindows[window], phase, bin);
+            }
         }
     }
 }
