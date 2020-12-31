@@ -128,6 +128,8 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
     }
 
     // Calculate new magnitudes by resampling and scale frequencies.
+    newMags->clear();
+    newFreqs->clear();
     for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
         for (int window = 0; window < windowCount; ++window) {
             int newBin = bin * pitchScaleFactor;

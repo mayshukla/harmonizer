@@ -36,6 +36,17 @@ public:
         return data[n * a + b];
     }
 
+    /**
+     * Sets all elements to zero
+     */
+    void clear() {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                set(i, j, 0);
+            }
+        }
+    }
+
 private:
     int n;
     int m;
