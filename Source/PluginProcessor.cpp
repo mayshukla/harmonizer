@@ -206,7 +206,7 @@ void HarmonizerjuceAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 
             // Clear output fft windows
             for (int window = 0; window < phaseVocoder->getWindowCount(); ++window) {
-                for (int bin = 0; bin < phaseVocoder->getWindowSize(); ++bin) {
+                for (int bin = 0; bin < phaseVocoder->getWindowSize() / 2 + 1; ++bin) {
                     cvec_norm_set_sample(outputFftWindows[window], 0, bin);
                     cvec_phas_set_sample(outputFftWindows[window], 0, bin);
                 }

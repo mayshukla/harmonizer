@@ -1,5 +1,4 @@
 ## TODO
-- figure out how length of cvec_t works
 - make it mono only
 
 ## Implementation Plan

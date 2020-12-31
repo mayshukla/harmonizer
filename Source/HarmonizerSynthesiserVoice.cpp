@@ -106,7 +106,7 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
 
     // Estimate actual frequency of each bin based on phase difference between
     // each window.
-    for (int bin = 0; bin < windowSize; ++bin) {
+    for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
         for (int window = 0; window < windowCount; ++window) {
             float phase = cvec_phas_get_sample(inputFftWindows[window], bin);
             float phaseDiff = phase - previousPhase[bin];
@@ -128,10 +128,10 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
     }
 
     // Calculate new magnitudes by resampling and scale frequencies.
-    for (int bin = 0; bin < windowSize; ++bin) {
+    for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
         for (int window = 0; window < windowCount; ++window) {
             int newBin = bin * pitchScaleFactor;
-            if (newBin < windowSize) {
+            if (newBin < windowSize / 2 + 1) {
                 // Resample magnitude
                 float oldMag = cvec_norm_get_sample(inputFftWindows[window], bin);
                 newMags->set(window, newBin, oldMag);
@@ -145,7 +145,7 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
     cvec_t **outputFftWindows = processor.getOutputFftWindows();
 
     // Calculate new phases based on scaled frequencies.
-    for (int bin = 0; bin < windowSize; ++bin) {
+    for (int bin = 0; bin < windowSize / 2 + 1; ++bin) {
         for (int window = 0; window < windowCount; ++window) {
             float deltaFreq = newFreqs->get(window, bin)
                 - ((float)bin) * freqPerBin;
