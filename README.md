@@ -2,8 +2,10 @@
 
 A polyphonic pitch-shifting plugin built using open source libraries.
 
-My goal is to create something similar to Antares Harmony Engine which is often
-used by Bon Iver to create vocal harmonies.
+Pitches are controlled by midi.
+
+My goal is to create something similar to Antares Harmony Engine or the
+["Messina" device that Bon Iver uses to create vocal harmonies](https://youtu.be/CaYgMdq6NDg).
 
 ## TODO
 - fix polyphony bug
