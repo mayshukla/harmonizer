@@ -7,6 +7,17 @@ Pitches are controlled by midi.
 My goal is to create something similar to Antares Harmony Engine or the
 ["Messina" device that Bon Iver uses to create vocal harmonies](https://youtu.be/CaYgMdq6NDg).
 
+## How It Works
+
+- The pitch of the input signal is estimated using the pitch detection module
+  from the aubio library.
+- Target pitches are identified based on which midi notes are active.
+- For each target pitch:
+  - The input signal is duplicated and shifted to the target frequency.
+  - Pitch shifting is done using the phase vocoder implementation from the
+    aubio library.
+- The pitch-shifted signals are summed together and written to the output buffer
+
 ## TODO
 - fix polyphony bug
 - improve pitch detection (lpf input signal?)
@@ -31,3 +42,6 @@ My goal is to create something similar to Antares Harmony Engine or the
 
 ## Depedencies
 - [aubio](https://aubio.org/)
+
+## Resources
+- (http://blogs.zynaptiq.com/bernsee/pitch-shifting-using-the-ft/)
