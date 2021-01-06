@@ -1,36 +1,16 @@
+# Harmonizer
+
+A polyphonic pitch-shifting plugin built using open source libraries.
+
+My goal is to create something similar to Antares Harmony Engine which is often
+used by Bon Iver to create vocal harmonies.
+
 ## TODO
-- make it mono only
-- figure out why polyphony doesn't work
+- fix polyphony bug
+- improve pitch detection (lpf input signal?)
+- fix stereo routing
 
 ## Implementation Plan
-- PhaseVocoder: wrapper around aubio pvoc
-  - doForward: float[] -> cvec_t[][]
-  - doReverse: cvec_t[][] -> float[]
-- HarmonizerAudioProcessor: holds a Synthesizer, does setup for Synthesizer (e.g.
-  add voices), does forward phase vocoder transform (since this is shared
-  between voices)
-  - Has a method to supply it with input signal
-- HarmonizerSynthesizerVoice: responsible for pitch shifting one note and
-  adding that note to the output buffer.
-  - Needs a reference to HarmonizerAudioProcessor to get forward phase vocoder
-    signal and current pitch
-- HarmonizerSound: a simple description of a sound. Required by the Synthesizer
-  class.
-
-## New Implementation Plan
-- Just use one RubberBandStretcher per voice
-- If this is too inefficient, they I made need to implement my own phase
-  vocoder.
-
-- HarmonizerSynthesizerVoice: responsible for pitch shifting one note and
-  adding that note to the output buffer.
-  - Needs a reference to HarmonizerAudioProcessor to get current pitch and
-    pointer to buffer with input signal (since Synthesiser class usually
-    doesn't expect input signal)
-- HarmonizerSound: a simple description of a sound. Required by the Synthesizer
-  class.
-
-## New New Implementation Plan
 - voices do pitch shifting and add their own shifted signal to the frequency
   domain
 - this way there is only one forward and one reverse pvoc operation
