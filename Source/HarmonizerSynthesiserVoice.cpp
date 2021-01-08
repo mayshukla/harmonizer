@@ -91,6 +91,32 @@ static inline float constrainAngle(float angle) {
   return angle;
 }
 
+static void polarToRect(float mag, float phase, float *re, float *im) {
+    *re = mag * std::cos(phase);
+    *im = mag * std::sin(phase);
+}
+
+static void rectToPolar(float re, float im, float *mag, float *phase) {
+    *mag = std::sqrt(std::pow(re, 2) +  std::pow(im, 2));
+    *phase = std::atan(im / re);
+    // TODO is this correct?
+    if (re < 0) {
+        *phase += M_PI;
+    }
+}
+
+static void addComplex(float magA, float phaseA, float magB, float phaseB, float *resultMag, float *resultPhase) {
+    float reA, imA;
+    polarToRect(magA, phaseA, &reA, &imA);
+    float reB, imB;
+    polarToRect(magB, phaseB, &reB, &imB);
+
+    float resultRe = reA + reB;
+    float resultIm = imA + imB;
+
+    rectToPolar(resultRe, resultIm, resultMag, resultPhase);
+}
+
 void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffer, int startSample, int numSamples) {
     float targetFreq = aubio_miditofreq(midiNoteNumber);
     float pitchScaleFactor = targetFreq / processor.getCurrentPitch();
@@ -159,10 +185,13 @@ void HarmonizerSynthesiserVoice::renderNextBlock(AudioBuffer<float> &outputBuffe
 
             // Add mag and phase to existing data
             if (voiceOn) {
-                mag +=  cvec_norm_get_sample(outputFftWindows[window], bin);
-                cvec_norm_set_sample(outputFftWindows[window], mag, bin);
-                phase +=  cvec_phas_get_sample(outputFftWindows[window], bin);
-                cvec_phas_set_sample(outputFftWindows[window], phase, bin);
+                float summedMag, summedPhase;
+                float oldMag =  cvec_norm_get_sample(outputFftWindows[window], bin);
+                float oldPhase =  cvec_phas_get_sample(outputFftWindows[window], bin);
+                addComplex(mag, phase, oldMag, oldPhase, &summedMag, &summedPhase);
+
+                cvec_norm_set_sample(outputFftWindows[window], summedMag, bin);
+                cvec_phas_set_sample(outputFftWindows[window], summedPhase, bin);
             }
         }
     }
