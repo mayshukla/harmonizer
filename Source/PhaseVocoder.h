@@ -48,9 +48,9 @@ private:
     // Size of buffer processed by Processor
     int bufferSize;
     // Size of window for phase vocoder
-    int windowSize = 64;
+    int windowSize = 128;
     // Number of samples between start of one phase vocoder window and next
-    int hopSize = windowSize / 4;
+    int hopSize = windowSize / 8;
     // Numbfer of windows. Need to know bufferSize first.
     int windowCount;
 
