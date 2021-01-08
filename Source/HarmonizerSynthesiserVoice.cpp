@@ -93,6 +93,10 @@ static inline float constrainAngle(float angle) {
 }
 
 static void polarToRect(float mag, float phase, float *re, float *im) {
+    if (std::isnan(mag) || std::isnan(phase)) {
+        *re = 0;
+        *im = 0;
+    }
     *re = mag * std::cos(phase);
     *im = mag * std::sin(phase);
 }
@@ -102,6 +106,8 @@ static void rectToPolar(float re, float im, float *mag, float *phase) {
     if (re == 0) {
         if (im > 0) {
             *phase = M_PI_2;
+        } else if (im == 0) {
+            *phase = 0;
         } else {
             *phase = - M_PI_2;
         }

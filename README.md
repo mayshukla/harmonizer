@@ -19,8 +19,8 @@ My goal is to create something similar to Antares Harmony Engine or the
 - The pitch-shifted signals are summed together and written to the output buffer
 
 ## TODO
-- fix polyphony bug
 - improve pitch detection (lpf input signal?)
+- experiment with different window sizes and overlap
 - fix stereo routing
 
 ## Implementation Plan
