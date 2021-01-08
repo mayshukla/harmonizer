@@ -98,6 +98,14 @@ static void polarToRect(float mag, float phase, float *re, float *im) {
 
 static void rectToPolar(float re, float im, float *mag, float *phase) {
     *mag = std::sqrt(std::pow(re, 2) +  std::pow(im, 2));
+    if (re == 0) {
+        if (im > 0) {
+            *phase = M_PI_2;
+        } else {
+            *phase = - M_PI_2;
+        }
+        return;
+    }
     *phase = std::atan(im / re);
     // TODO is this correct?
     if (re < 0) {
