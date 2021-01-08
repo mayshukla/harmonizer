@@ -11,6 +11,7 @@
 #include "HarmonizerSynthesiserVoice.h"
 
 #include <cmath>
+#include <iostream>
 
 #include <aubio/musicutils.h>
 
