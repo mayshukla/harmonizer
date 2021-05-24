@@ -1,0 +1,5 @@
+{
+    "clangd.arguments": [
+        "--compile-commands-dir=/home/ryan/Files/code/harmonizer-juce/Builds/LinuxMakefile"
+    ]
+}

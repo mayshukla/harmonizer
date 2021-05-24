@@ -20,6 +20,8 @@ My goal is to create something similar to Antares Harmony Engine or the
 
 ## TODO
 - fix all NaN issues
+- figure out why it sounds better when I sing higher
+- try lpf output signal
 - improve pitch detection (lpf input signal?)
 - experiment with different window sizes and overlap
 - fix stereo routing
